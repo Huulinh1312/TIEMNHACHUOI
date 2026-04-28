@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vòng Quay Tiệm Trà Nhà Chuối</title>
+</head>
+<body style="font-family: 'Arial', sans-serif; background-color: #fdf6e3; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; margin: 0; text-align: center; overflow: hidden;">
+
+    <h1 style="color: #4A2E1B; margin-bottom: 5px; font-size: 28px;">VÒNG QUAY MAY MẮN</h1>
+    <p style="color: #4A2E1B; font-weight: bold; margin-bottom: 30px;">Mua trên 2 ly - Quét mã để quay!</p>
+
+    <div style="position: relative; width: 300px; height: 300px;">
+        <div style="position: absolute; top: -15px; left: 50%; transform: translateX(-50%); width: 0; height: 0; border-left: 15px solid transparent; border-right: 15px solid transparent; border-top: 25px solid #e74c3c; z-index: 10;"></div>
+
+        <canvas id="wheel" width="300" height="300" style="border-radius: 50%; border: 5px solid #4A2E1B; box-shadow: 0 4px 10px rgba(0,0,0,0.2); transition: transform 4s ease-out;"></canvas>
+    </div>
+
+    <button onclick="spin()" style="margin-top: 40px; padding: 12px 40px; font-size: 18px; font-weight: bold; background-color: #FBCB13; color: #4A2E1B; border: 2px solid #4A2E1B; border-radius: 25px; cursor: pointer; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">QUAY NGAY</button>
+
+    <div style="margin-top: 30px;">
+        <p style="color: #4A2E1B; font-size: 14px; margin-bottom: 10px;">Hoặc quét mã này để chơi trên điện thoại:</p>
+        <img id="qrcode" src="https://api.qrserver.com/v1/create-qr-code/?size=120x120&data=https://tiemtranhachuoi.com" alt="QR Code" style="border: 3px solid #4A2E1B; border-radius: 8px;">
+    </div>
+
+    <script>
+        const canvas = document.getElementById("wheel");
+        const ctx = canvas.getContext("2d");
+        
+        // Danh sách 8 món quà
+        const gifts = [
+            "FREE 1 LY SIZE M", "GIẢM 10K", "FREE TOPPING", "SIZE L GIÁ SIZE M", 
+            "VOUCHER 20K", "SNACK CHUỐI", "MÓC KHÓA", "GIẢM 5K"
+        ];
+        
+        // Màu xen kẽ: Vàng và Xanh lá (tone màu Tiệm Trà Nhà Chuối)
+        const colors = ["#FBCB13", "#4CAF50", "#FBCB13", "#4CAF50", "#FBCB13", "#4CAF50", "#FBCB13", "#4CAF50"];
+        const slices = gifts.length;
+        const arc = Math.PI * 2 / slices;
+
+        // Vẽ vòng quay
+        function drawWheel() {
+            for (let i = 0; i < slices; i++) {
+                const angle = i * arc;
+                ctx.beginPath();
+                ctx.fillStyle = colors[i];
+                ctx.moveTo(150, 150);
+                ctx.arc(150, 150, 150, angle, angle + arc);
+                ctx.lineTo(150, 150);
+                ctx.fill();
+
+                // Chèn chữ vào từng ô
+                ctx.save();
+                ctx.translate(150, 150);
+                ctx.rotate(angle + arc / 2);
+                ctx.textAlign = "right";
+                ctx.fillStyle = "#4A2E1B"; // Màu chữ nâu đậm
+                ctx.font = "bold 13px Arial";
+                ctx.fillText(gifts[i], 135, 5);
+                ctx.restore();
+            }
+        }
+        drawWheel();
+
+        let currentRot = 0;
+        let isSpinning = false;
+
+        // Hàm xử lý khi bấm nút Quay
+        function spin() {
+            if (isSpinning) return;
+            isSpinning = true;
+            
+            // Random số vòng quay (quay ít nhất 10 vòng + góc ngẫu nhiên)
+            const spinAngle = Math.floor(Math.random() * 360) + 3600; 
+            currentRot += spinAngle;
+            
+            // CSS xoay canvas
+            canvas.style.transform = `rotate(${currentRot}deg)`;
+
+            // Đợi 4s cho animation xoay xong rồi tính toán kết quả
+            setTimeout(() => {
+                const actualDeg = currentRot % 360;
+                // Mũi tên nằm ở góc trên cùng (tương đương 270 độ trên hệ tọa độ canvas)
+                const winAngle = (360 - actualDeg + 270) % 360;
+                const index = Math.floor(winAngle / (360 / slices));
+                
+                alert("🎉 CHÚC MỪNG! BẠN QUAY TRÚNG: " + gifts[index] + " 🎉");
+                isSpinning = false;
+            }, 4000);
+        }
+    </script>
+</body>
+</html>
