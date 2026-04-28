@@ -67,24 +67,30 @@
 
         // Hàm xử lý khi bấm nút Quay
         function spin() {
+            // KIỂM TRA XEM KHÁCH ĐÃ QUAY CHƯA
+            if (localStorage.getItem("daQuayHomNay")) {
+                alert("Bạn đã dùng hết lượt quay hôm nay rồi. Hẹn bạn lần sau nha!");
+                return;
+            }
+
             if (isSpinning) return;
             isSpinning = true;
             
-            // Random số vòng quay (quay ít nhất 10 vòng + góc ngẫu nhiên)
             const spinAngle = Math.floor(Math.random() * 360) + 3600; 
             currentRot += spinAngle;
             
-            // CSS xoay canvas
             canvas.style.transform = `rotate(${currentRot}deg)`;
 
-            // Đợi 4s cho animation xoay xong rồi tính toán kết quả
             setTimeout(() => {
                 const actualDeg = currentRot % 360;
-                // Mũi tên nằm ở góc trên cùng (tương đương 270 độ trên hệ tọa độ canvas)
                 const winAngle = (360 - actualDeg + 270) % 360;
                 const index = Math.floor(winAngle / (360 / slices));
                 
                 alert("🎉 CHÚC MỪNG! BẠN QUAY TRÚNG: " + gifts[index] + " 🎉");
+                
+                // LƯU LẠI TRẠNG THÁI ĐÃ QUAY VÀO MÁY KHÁCH
+                localStorage.setItem("daQuayHomNay", "true");
+                
                 isSpinning = false;
             }, 4000);
         }
