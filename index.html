@@ -67,12 +67,6 @@
 
         // Hàm xử lý khi bấm nút Quay
         function spin() {
-            // KIỂM TRA XEM KHÁCH ĐÃ QUAY CHƯA
-            if (localStorage.getItem("daQuayHomNay")) {
-                alert("Bạn đã dùng hết lượt quay hôm nay rồi. Hẹn bạn lần sau nha!");
-                return;
-            }
-
             if (isSpinning) return;
             isSpinning = true;
             
@@ -87,9 +81,6 @@
                 const index = Math.floor(winAngle / (360 / slices));
                 
                 alert("🎉 CHÚC MỪNG! BẠN QUAY TRÚNG: " + gifts[index] + " 🎉");
-                
-                // LƯU LẠI TRẠNG THÁI ĐÃ QUAY VÀO MÁY KHÁCH
-                localStorage.setItem("daQuayHomNay", "true");
                 
                 isSpinning = false;
             }, 4000);
